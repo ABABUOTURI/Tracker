@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "440719674261",
+    "firebase_url": "https://contactportfolio-ea6bf-default-rtdb.firebaseio.com",
+    "project_id": "contactportfolio-ea6bf",
+    "storage_bucket": "contactportfolio-ea6bf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440719674261:android:ba2de03a3c7056d61c449c",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfhHbo68kQBTYcywwVR8lK9KxsR2qZiMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
