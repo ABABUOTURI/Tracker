@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddIncomePage extends StatefulWidget {
   @override
@@ -7,7 +9,6 @@ class AddIncomePage extends StatefulWidget {
 }
 
 class _AddIncomePageState extends State<AddIncomePage> {
-  final TextEditingController _dateController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final List<String> _sources = ['Salary', 'Business', 'Investment', 'Other'];
@@ -21,10 +22,113 @@ class _AddIncomePageState extends State<AddIncomePage> {
 
   @override
   void dispose() {
-    _dateController.dispose();
     _amountController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  void saveIncome() async {
+    if (_amountController.text.isEmpty || _selectedSource == null || _descriptionController.text.isEmpty) {
+      // Show error if any field is empty
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Please fill all fields'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    double? amount = double.tryParse(_amountController.text);
+    if (amount == null) {
+      // Show error if amount is not a valid number
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Please enter a valid amount'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String userId = user.uid;
+      String userEmail = user.email ?? 'No email';
+
+      FirebaseFirestore.instance
+          .collection('incomes')
+          .add({
+            'userId': userId,
+            'userEmail': userEmail,
+            'amount': amount,
+            'source': _selectedSource,
+            'description': _descriptionController.text,
+            'timestamp': FieldValue.serverTimestamp(), // Add server timestamp
+          }).then((value) {
+        _amountController.clear();
+        _descriptionController.clear();
+        setState(() {
+          _selectedSource = _sources.isNotEmpty ? _sources[0] : null;
+        });
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Success'),
+            content: Text('Income added successfully'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }).catchError((error) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Error'),
+            content: Text('Failed to add income: $error'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      });
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('No user logged in'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -37,19 +141,17 @@ class _AddIncomePageState extends State<AddIncomePage> {
             Navigator.pop(context);
           },
         ),
-        title: Text('Add Income',
-         style: TextStyle(color: Colors.white),),
+        title: Text(
+          'Add Income',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Color.fromARGB(255, 3, 40, 104),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
-              controller: _dateController,
-              decoration: InputDecoration(labelText: 'Date'),
-              keyboardType: TextInputType.datetime,
-            ),
             TextField(
               controller: _amountController,
               decoration: InputDecoration(labelText: 'Amount'),
@@ -79,29 +181,30 @@ class _AddIncomePageState extends State<AddIncomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    // Implement save logic here
-                  },
+                  onPressed: saveIncome,
                   style: ElevatedButton.styleFrom(
-             backgroundColor: Color.fromARGB(255, 3, 40, 104),
-            ),
-                  child: Text('Save',
-                  style: TextStyle(color: Colors.white),),
+                    backgroundColor: Color.fromARGB(255, 3, 40, 104),
+                  ),
+                  child: Text(
+                    'Save',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    _dateController.clear();
                     _amountController.clear();
                     _descriptionController.clear();
                     setState(() {
                       _selectedSource = _sources.isNotEmpty ? _sources[0] : null;
                     });
                   },
-                    style: ElevatedButton.styleFrom(
-             backgroundColor: Color.fromARGB(255, 3, 40, 104),
-            ),
-                  child: Text('Cancel',
-                  style: TextStyle(color: Colors.white),),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 3, 40, 104),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
@@ -113,7 +216,6 @@ class _AddIncomePageState extends State<AddIncomePage> {
         items: const [
           Icon(Icons.home, color: Colors.black),
           Icon(Icons.attach_money, color: Colors.black),
-          Icon(Icons.list, color: Colors.black),
           Icon(Icons.bar_chart, color: Colors.black),
           Icon(Icons.notification_add, color: Colors.black),
           Icon(Icons.settings, color: Colors.black),

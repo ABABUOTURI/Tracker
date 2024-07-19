@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter1/pages/DashboardPage.dart';
+import 'package:flutter1/pages/budget_page.dart';
+import 'package:flutter1/pages/notification_page.dart';
+import 'package:flutter1/pages/profile_page.dart';
+
+import 'ChartsPage.dart';
 
 class ExpenseListPage extends StatefulWidget {
   @override
@@ -7,19 +15,28 @@ class ExpenseListPage extends StatefulWidget {
 }
 
 class _ExpenseListPageState extends State<ExpenseListPage> {
-  List<Expense> expenses = [
-    Expense(date: '2024-07-01', amount: 50.0, category: 'Category 1', description: 'Groceries'),
-    Expense(date: '2024-07-02', amount: 20.0, category: 'Category 2', description: 'Transport'),
-    Expense(date: '2024-07-03', amount: 100.0, category: 'Category 3', description: 'Utilities'),
-  ];
-
   String selectedFilterCategory = 'All';
   DateTime selectedFilterDate = DateTime.now();
+  late User loggedInUser;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchLoggedInUser();
+  }
+
+  void fetchLoggedInUser() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        loggedInUser = user;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // the top navigation bar
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -30,8 +47,6 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
         title: Text('Expense List'),
         backgroundColor: Colors.blueAccent,
       ),
-
-      // The body of the page where all functionalities go
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -88,33 +103,65 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
 
             // Expenses list section
             Expanded(
-              child: ListView.builder(
-                itemCount: expenses.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: ListTile(
-                      title: Text('${expenses[index].date} - ${expenses[index].category}'),
-                      subtitle: Text('${expenses[index].amount} - ${expenses[index].description}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              // Implement editing logic here
-                            },
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(loggedInUser.uid)
+                    .collection('expenses')
+                    .orderBy('timestamp', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  List<DocumentSnapshot> expenseDocuments = snapshot.data!.docs;
+                  List<Expense> expenses = expenseDocuments.map((document) {
+                    return Expense(
+                      date: document['date'],
+                      amount: document['amount'].toDouble(),
+                      category: document['category'],
+                      description: document['description'],
+                    );
+                  }).toList();
+
+                  if (selectedFilterCategory != 'All') {
+                    expenses = expenses
+                        .where((expense) => expense.category == selectedFilterCategory)
+                        .toList();
+                  }
+
+                  return ListView.builder(
+                    itemCount: expenses.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          title: Text('${expenses[index].date} - ${expenses[index].category}'),
+                          subtitle: Text('${expenses[index].amount} - ${expenses[index].description}'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.edit),
+                                onPressed: () {
+                                  // Implement editing logic here
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () {
+                                  deleteExpense(expenseDocuments[index].id);
+                                },
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              setState(() {
-                                expenses.removeAt(index);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -122,14 +169,11 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
           ],
         ),
       ),
-
-      // the curved navigation bar at the bottom
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.blueAccent,
         items: const [
           Icon(Icons.home, color: Colors.black),
           Icon(Icons.attach_money, color: Colors.black),
-          Icon(Icons.list, color: Colors.black),
           Icon(Icons.bar_chart, color: Colors.black),
           Icon(Icons.notification_add, color: Colors.black),
           Icon(Icons.settings, color: Colors.black),
@@ -139,26 +183,51 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
           switch (index) {
             case 0:
               // Navigate to Home Page
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => DashboardPage()));
               break;
             case 1:
               // Navigate to Add Income Page
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => BudgetPage()));
               break;
             case 2:
-              // Navigate to Expense Tracker Page
+              // Stay on Expense Tracker Page
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChartsPage()));
               break;
             case 3:
               // Navigate to Charts Page
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => NotificationsPage()));
               break;
             case 4:
               // Navigate to Notifications Page
-              break;
-            case 5:
-              // Navigate to Settings Page
+               Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ProfilePage()));
               break;
           }
         },
       ),
     );
+  }
+
+  void deleteExpense(String expenseId) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(loggedInUser.uid)
+        .collection('expenses')
+        .doc(expenseId)
+        .delete()
+        .then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Expense deleted successfully')),
+      );
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete expense: $error')),
+      );
+    });
   }
 }
 
@@ -174,11 +243,4 @@ class Expense {
     required this.category,
     required this.description,
   });
-}
-
-class Category {
-  String name;
-  String type;
-
-  Category({required this.name, required this.type});
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter1/pages/add_expense_page.dart';
+import 'package:flutter1/pages/add_income_page.dart';
+import 'package:flutter1/pages/income_list_page.dart';
 import 'package:flutter1/pages/login_page.dart';
-//import 'package:flutter1/pages/CategorizationPage.dart';
-//import 'pages/Categorizationpage.dart'; // Adjust the path as per your project structure
+import 'package:flutter1/pages/reset_password_page.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,17 +22,24 @@ void main() async {
   runApp(MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Login Demo',
+      title: 'Expense Tracker',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginPage(), // Ensure LoginPage is correctly imported and defined
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LoginPage(),
+        '/reset_password': (context) => ResetPasswordPage(),
+        '/add_expense': (context) => AddExpensePage(),
+         '/add_income': (context) => AddIncomePage(),
+          '/income_list_page': (context) => IncomeListPage(),
+        // Add more routes as needed
+      },
     );
   }
 }
