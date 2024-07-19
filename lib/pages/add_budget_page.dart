@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../models/budget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter1/models/notification.dart'; // Import NotificationModel
+import '../models/budget.dart'; // Import Budget and CategoryBudget models
 
 class AddBudgetPage extends StatefulWidget {
   final Function(Budget) onSave;
@@ -14,11 +17,8 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _monthlyBudgetController = TextEditingController();
   List<CategoryBudget> _categoryBudgets = [];
-  final List<String> _categories = [
-    'Food',
-     'Transport',
-      'Entertainment',
-       'Other'];
+  List<NotificationModel> _notifications = []; // Initialize _notifications list
+  final List<String> _categories = ['Food', 'Transport', 'Entertainment', 'Other'];
 
   @override
   void initState() {
@@ -26,15 +26,44 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
     _categoryBudgets = _categories.map((category) => CategoryBudget(category: category, amount: 0)).toList();
   }
 
-  void _saveBudget() {
+  void _saveBudget() async {
     if (_formKey.currentState!.validate()) {
       double monthlyBudget = double.tryParse(_monthlyBudgetController.text) ?? 0;
       Budget newBudget = Budget(
         monthlyBudget: monthlyBudget,
         categoryBudgets: _categoryBudgets,
       );
-      widget.onSave(newBudget);
-      Navigator.pop(context);
+
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String userId = user.uid;
+        String email = user.email ?? '';
+
+        // Save budget to Firestore
+        await FirebaseFirestore.instance.collection('budgets').add({
+          'userId': userId,
+          'email': email,
+          'monthlyBudget': monthlyBudget,
+          'categoryBudgets': _categoryBudgets.map((cb) => {'category': cb.category, 'amount': cb.amount}).toList(),
+        });
+
+        // Notify user about new budget
+        _notifications.add(NotificationModel(
+          title: 'New Budget Added',
+          description:
+              'Your new monthly budget of $monthlyBudget Ksh has been successfully added.',
+          time: DateTime.now(),
+        ));
+
+        // Call onSave callback to update parent widget
+        widget.onSave(newBudget);
+
+        // Navigate back
+        Navigator.pop(context);
+      } else {
+        // Handle the case where user is not logged in
+        print('No user logged in');
+      }
     }
   }
 
@@ -53,8 +82,10 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Set Budget',
-         style: TextStyle(color: Colors.white),),
+        title: const Text(
+          'Set Budget',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Color.fromARGB(255, 3, 40, 104),
       ),
       body: Padding(
@@ -93,25 +124,25 @@ class _AddBudgetPageState extends State<AddBudgetPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   ElevatedButton(
-  onPressed: _saveBudget,
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Color.fromARGB(255, 3, 40, 104), // Set button background color
-  ),
-  child: Text(
-    'Save',
-    style: TextStyle(color: Colors.white), // Set text color
-  ),
-),
-                 ElevatedButton(
-  onPressed: _cancel,
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Color.fromARGB(255, 3, 40, 104), // Set button background color
-  ),
-  child: Text(
-    'Cancel',
-    style: TextStyle(color: Colors.white), // Set text color
-  ),
-),
+                    onPressed: _saveBudget,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 3, 40, 104), // Set button background color
+                    ),
+                    child: Text(
+                      'Save',
+                      style: TextStyle(color: Colors.white), // Set text color
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: _cancel,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 3, 40, 104), // Set button background color
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.white), // Set text color
+                    ),
+                  ),
                 ],
               ),
             ],
