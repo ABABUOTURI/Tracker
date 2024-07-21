@@ -145,80 +145,114 @@ class _AddIncomePageState extends State<AddIncomePage> {
           'Add Income',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+        backgroundColor: Color(0xFF222831), // Matching color with AddExpensePage
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _amountController,
-              decoration: InputDecoration(labelText: 'Amount'),
-              keyboardType: TextInputType.number,
-            ),
-            DropdownButtonFormField<String>(
-              value: _selectedSource,
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedSource = newValue;
-                });
-              },
-              items: _sources.map((source) {
-                return DropdownMenuItem<String>(
-                  value: source,
-                  child: Text(source),
-                );
-              }).toList(),
-              decoration: InputDecoration(labelText: 'Source'),
-            ),
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: saveIncome,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 3, 40, 104),
-                  ),
-                  child: Text(
-                    'Save',
-                    style: TextStyle(color: Colors.white),
-                  ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF222831),
+              Color(0xFF393E46),
+              Color(0xFFFD7014),
+              Color(0xFFEEEEEE),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: _amountController,
+                decoration: InputDecoration(
+                  labelText: 'Amount',
+                  border: OutlineInputBorder(), // Added border
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    _amountController.clear();
-                    _descriptionController.clear();
-                    setState(() {
-                      _selectedSource = _sources.isNotEmpty ? _sources[0] : null;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 3, 40, 104),
-                  ),
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: Color(0xFFEEEEEE)),
+              ),
+              SizedBox(height: 12.0),
+              DropdownButtonFormField<String>(
+                value: _selectedSource,
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedSource = newValue;
+                  });
+                },
+                items: _sources.map((source) {
+                  return DropdownMenuItem<String>(
+                    value: source,
+                    child: Text(source, style: TextStyle(color: Color(0xFFEEEEEE))),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  labelText: 'Source',
+                  border: OutlineInputBorder(), // Added border
                 ),
-              ],
-            ),
-          ],
+                style: TextStyle(color: Color(0xFFEEEEEE)),
+              ),
+              SizedBox(height: 12.0),
+              TextField(
+                controller: _descriptionController,
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(), // Added border
+                ),
+                style: TextStyle(color: Color(0xFFEEEEEE)),
+              ),
+              SizedBox(height: 20.0),
+              // Arrange buttons in two columns
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: saveIncome,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF222831),
+                      ),
+                      child: Text(
+                        'Save',
+                        style: TextStyle(color: Color(0xFFEEEEEE)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10.0),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        _amountController.clear();
+                        _descriptionController.clear();
+                        setState(() {
+                          _selectedSource = _sources.isNotEmpty ? _sources[0] : null;
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Color(0xFF222831),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Color(0xFFEEEEEE)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+        backgroundColor: Color(0xFFFD7014),
         items: const [
-          Icon(Icons.home, color: Colors.black),
-          Icon(Icons.attach_money, color: Colors.black),
-          Icon(Icons.bar_chart, color: Colors.black),
-          Icon(Icons.notification_add, color: Colors.black),
-          Icon(Icons.settings, color: Colors.black),
+          Icon(Icons.dashboard, color: Color(0xFF222831)),
+          Icon(Icons.attach_money, color: Color(0xFF222831)),
+          Icon(Icons.bar_chart, color: Color(0xFF222831)),
+          Icon(Icons.notification_add, color: Color(0xFF222831)),
+          Icon(Icons.settings, color: Color(0xFF222831)),
         ],
         onTap: (index) {
           // Handle button tap

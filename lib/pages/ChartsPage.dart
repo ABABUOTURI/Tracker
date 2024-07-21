@@ -77,6 +77,46 @@ class _ChartsPageState extends State<ChartsPage> {
       SecuritySettingsPage(),
     ];
 
+    Widget buildBarChart(double value, Color color) {
+      return BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          barTouchData: BarTouchData(enabled: false),
+          titlesData: FlTitlesData(
+            show: true,
+            bottomTitles: SideTitles(
+              showTitles: false,
+            ),
+            leftTitles: SideTitles(
+              showTitles: true,
+              getTextStyles: (context, value) => const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+              margin: 16,
+            ),
+          ),
+          borderData: FlBorderData(
+            show: false,
+          ),
+          barGroups: [
+            BarChartGroupData(
+              x: 0,
+              barRods: [
+                BarChartRodData(
+                  y: value,
+                  colors: [color],
+                  width: 22,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -94,81 +134,70 @@ class _ChartsPageState extends State<ChartsPage> {
       backgroundColor: Colors.grey[300],
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: BarChart(
-          BarChartData(
-            alignment: BarChartAlignment.spaceAround,
-            barTouchData: BarTouchData(enabled: false),
-            titlesData: FlTitlesData(
-              show: true,
-              bottomTitles: SideTitles(
-                showTitles: true,
-                getTextStyles: (context, value) => const TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.bold, fontSize: 14),
-                margin: 16,
-                getTitles: (double value) {
-                  switch (value.toInt()) {
-                    case 0:
-                      return 'Income';
-                    case 1:
-                      return 'Expense';
-                    case 2:
-                      return 'Budget';
-                    default:
-                      return '';
-                  }
-                },
-              ),
-              leftTitles: SideTitles(
-                showTitles: true,
-                getTextStyles: (context, value) => const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Cards displaying information
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text('Total Income'),
+                      subtitle: Text('\$${income.toStringAsFixed(2)}'),
+                    ),
+                    SizedBox(
+                      height: 150,
+                      child: buildBarChart(income, Colors.blue),
+                    ),
+                  ],
                 ),
-                margin: 16,
               ),
-            ),
-            borderData: FlBorderData(
-              show: false,
-            ),
-            barGroups: [
-              BarChartGroupData(
-                x: 0,
-                barRods: [
-                  BarChartRodData(
-                    y: income,
-                    colors: [Colors.blue],
-                    width: 22,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ],
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text('Total Expense'),
+                      subtitle: Text('\$${expense.toStringAsFixed(2)}'),
+                    ),
+                    SizedBox(
+                      height: 150,
+                      child: buildBarChart(expense, Colors.red),
+                    ),
+                  ],
+                ),
               ),
-              BarChartGroupData(
-                x: 1,
-                barRods: [
-                  BarChartRodData(
-                    y: expense,
-                    colors: [Colors.red],
-                    width: 22,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ],
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text('Budget'),
+                      subtitle: Text('\$${budget.toStringAsFixed(2)}'),
+                    ),
+                    SizedBox(
+                      height: 150,
+                      child: buildBarChart(budget, Colors.green),
+                    ),
+                  ],
+                ),
               ),
-              BarChartGroupData(
-                x: 2,
-                barRods: [
-                  BarChartRodData(
-                    y: budget,
-                    colors: [Colors.green],
-                    width: 22,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ],
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text('Remaining Budget'),
+                      subtitle: Text('\$${(budget - expense).toStringAsFixed(2)}'),
+                    ),
+                    SizedBox(
+                      height: 150,
+                      child: buildBarChart(budget - expense, Colors.orange),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
-      ), // Display the selected page
+      ),
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Color.fromARGB(255, 3, 40, 104),
         items: const [
@@ -216,4 +245,4 @@ class _ChartsPageState extends State<ChartsPage> {
       ),
     );
   }
-}
+}3

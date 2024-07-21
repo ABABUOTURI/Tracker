@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
+        fontFamily: 'Carnaby Street',
       ),
       initialRoute: '/',
       routes: {
@@ -123,145 +124,163 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.lock,
-                  size: 50,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF222831), Color(0xFF393E46), Color(0xFFFD7014), Color(0xFFEEEEEE)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Card(
+                color: Color(0xFFFD7014),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(height: 15),
-                const Text(
-                  'Login',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 34,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Welcome Back!',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-                const SizedBox(height: 15),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: TextField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Email',
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.lock,
+                        size: 50,
+                        color: Color(0xFFEEEEEE),
                       ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Password',
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                GestureDetector(
-                  onTap: signIn,
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurple,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: isLoading
-                          ? CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            )
-                          : const Text(
-                              'Login',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Don\'t have an Account?',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SignupPage(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'Sign Up',
+                      const SizedBox(height: 15),
+                      const Text(
+                        'Login',
                         style: TextStyle(
-                          color: Colors.blue,
                           fontWeight: FontWeight.bold,
+                          fontSize: 34,
+                          color: Color(0xFFEEEEEE),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ResetPasswordPage(),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Welcome Back!',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFFEEEEEE),
+                        ),
                       ),
-                    );
-                  },
-                  child: Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                    ),
+                      const SizedBox(height: 15),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: TextField(
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Email',
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: TextField(
+                            controller: passwordController,
+                            obscureText: true,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Password',
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      GestureDetector(
+                        onTap: signIn,
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF222831),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: isLoading
+                                ? CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  )
+                                : const Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Don\'t have an Account?',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignupPage(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ResetPasswordPage(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
