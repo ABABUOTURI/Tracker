@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter1/pages/ChartsPage.dart';
 import 'package:flutter1/pages/DashboardPage.dart';
 import 'package:flutter1/pages/notification_page.dart';
 import 'package:flutter1/pages/profile_page.dart';
@@ -69,10 +70,22 @@ class _BudgetPageState extends State<BudgetPage> {
           'Your Budgets',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+        backgroundColor: Color(0xFF222831), // Matching color with DashboardPage
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF222831),
+              Color(0xFF393E46),
+              Color(0xFFFD7014),
+              Color(0xFFEEEEEE),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -81,14 +94,17 @@ class _BudgetPageState extends State<BudgetPage> {
                 itemBuilder: (context, index) {
                   final budget = _budgets[index];
                   return Card(
+                    color: Color(0xFF393E46), // Match card color
                     child: ListTile(
                       title: Text(
-                          'Monthly Budget: Ksh.${budget.monthlyBudget.toStringAsFixed(2)}'),
+                          'Monthly Budget: Ksh.${budget.monthlyBudget.toStringAsFixed(2)}',
+                          style: TextStyle(color: Colors.white)),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: budget.categoryBudgets.map((categoryBudget) {
                           return Text(
-                              '${categoryBudget.category}: Ksh.${categoryBudget.amount.toStringAsFixed(2)}');
+                              '${categoryBudget.category}: Ksh.${categoryBudget.amount.toStringAsFixed(2)}',
+                              style: TextStyle(color: Colors.white));
                         }).toList(),
                       ),
                     ),
@@ -108,20 +124,20 @@ class _BudgetPageState extends State<BudgetPage> {
                     AddBudgetPage(onSave: _addNewBudget)),
           );
         },
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+        backgroundColor: Color(0xFFFD7014), // Match button color
         child: Icon(
           Icons.add,
-          color: Colors.white,
+          color: Colors.black,
         ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+         backgroundColor: Color(0xFFFD7014),
         items: const [
-          Icon(Icons.home, color: Colors.black),
-          Icon(Icons.attach_money, color: Colors.black),
-          Icon(Icons.bar_chart, color: Colors.black),
-          Icon(Icons.notification_add, color: Colors.black),
-          Icon(Icons.settings, color: Colors.black),
+          Icon(Icons.dashboard, color: Color(0xFF222831),),
+          Icon(Icons.attach_money, color: Color(0xFF222831),),
+          Icon(Icons.bar_chart, color:  Color(0xFF222831),),
+          Icon(Icons.notification_add, color:  Color(0xFF222831),),
+          Icon(Icons.settings, color:  Color(0xFF222831)),
         ],
         index: _pageIndex,
         onTap: (index) {
@@ -135,15 +151,14 @@ class _BudgetPageState extends State<BudgetPage> {
                   MaterialPageRoute(builder: (context) => DashboardPage()));
               break;
             case 1:
-              // Navigate to Budget Page
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => BudgetPage()));
               break;
-            /*case 2:
+            case 2:
               // Navigate to Reports or Charts Page
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ChartsPage()));
-              break;*/
+              break;
             case 3:
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => NotificationsPage()));

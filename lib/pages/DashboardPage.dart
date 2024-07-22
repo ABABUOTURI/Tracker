@@ -123,11 +123,23 @@ class _DashboardPageState extends State<DashboardPage> {
       appBar: AppBar(
         title: Text(
           'Dashboard',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Color(0xFFEEEEEE)),
         ),
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+        backgroundColor: Color(0xFF222831),
       ),
-      body: Padding(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF222831),
+              Color(0xFF393E46),
+              Color(0xFFFD7014),
+              Color(0xFFEEEEEE),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -149,13 +161,13 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+        backgroundColor: Color(0xFFFD7014),
         items: const [
-          Icon(Icons.home, color: Colors.black),
-          Icon(Icons.attach_money, color: Colors.black),
-          Icon(Icons.bar_chart, color: Colors.black),
-          Icon(Icons.notification_add, color: Colors.black),
-          Icon(Icons.settings, color: Colors.black),
+          Icon(Icons.dashboard, color: Color(0xFF222831),),
+          Icon(Icons.attach_money, color: Color(0xFF222831),),
+          Icon(Icons.bar_chart, color:  Color(0xFF222831),),
+          Icon(Icons.notification_add, color:  Color(0xFF222831),),
+          Icon(Icons.settings, color:  Color(0xFF222831)),
         ],
         index: _pageIndex,
         onTap: (index) {
@@ -189,15 +201,16 @@ class _DashboardPageState extends State<DashboardPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _buildSummaryCard('Total Income', totalIncome.toString()),
-        _buildSummaryCard('Total Expenses', totalExpenses.toString()),
-        _buildSummaryCard('Balance', balance.toString()),
+        _buildSummaryCard('Total Income', totalIncome.toString(), Color(0xFFFD7014)),
+        _buildSummaryCard('Total Expenses', totalExpenses.toString(), Color(0xFF393E46)),
+        _buildSummaryCard('Balance', balance.toString(), Color(0xFFFD7014)),
       ],
     );
   }
 
-  Widget _buildSummaryCard(String title, String value) {
+  Widget _buildSummaryCard(String title, String value, Color backgroundColor) {
     return Card(
+      color: backgroundColor,
       elevation: 2.0,
       child: Padding(
         padding: EdgeInsets.all(12.0),
@@ -206,12 +219,12 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             Text(
               title,
-              style: TextStyle(fontSize: 10.0, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 10.0, fontWeight: FontWeight.bold, color: Color(0xFFEEEEEE)),
             ),
             SizedBox(height: 7.0),
             Text(
               value,
-              style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Color(0xFFEEEEEE)),
             ),
           ],
         ),
@@ -239,11 +252,11 @@ class _DashboardPageState extends State<DashboardPage> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 3, 40, 104),
+              backgroundColor: Color(0xFF222831),
             ),
             child: const Text(
               'Add Income',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Color(0xFFEEEEEE)),
             ),
           ),
         ),
@@ -263,11 +276,11 @@ class _DashboardPageState extends State<DashboardPage> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 3, 40, 104),
+              backgroundColor: Color(0xFF222831),
             ),
             child: Text(
               'Add Expense',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Color(0xFFEEEEEE)),
             ),
           ),
         ),
@@ -276,74 +289,92 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Widget _buildListsContainer() {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.blue[100],
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: EdgeInsets.all(14.0),
-          margin: EdgeInsets.only(bottom: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Income List',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                height: 150, // Adjust height as needed
-                child: SingleChildScrollView(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: incomeList.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(incomeList[index].title),
-                        trailing: Text('\$${incomeList[index].amount.toString()}'),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
+  return Column(
+    children: [
+      Container(
+        decoration: BoxDecoration(
+          color: Color(0xFF393E46),
+          borderRadius: BorderRadius.circular(12),
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.red[100],
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: EdgeInsets.all(14.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Expense List',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Income List',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFFD7014),
               ),
-              Container(
-                height: 150, // Adjust height as needed
-                child: SingleChildScrollView(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: expenseList.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(expenseList[index].title),
-                        trailing: Text('\$${expenseList[index].amount.toString()}'),
-                      );
-                    },
+            ),
+            SizedBox(height: 10.0),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: incomeList.length,
+              itemBuilder: (context, index) {
+                Income income = incomeList[index];
+                return ListTile(
+                  title: Text(
+                    income.title,
+                    style: TextStyle(color: Color(0xFFEEEEEE)),
                   ),
-                ),
-              ),
-            ],
-          ),
+                  trailing: Text(
+                    'Ksh. ${income.amount.toString()}',
+                    style: TextStyle(color: Color(0xFFFD7014),
+                     fontSize: 14.0,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
-      ],
-    );
-  }
+      ),
+      SizedBox(height: 20.0),
+      Container(
+        decoration: BoxDecoration(
+          color:Color(0xFFFD7014),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Expense List',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+                color:  Color(0xFF393E46),
+              ),
+            ),
+            SizedBox(height: 10.0),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: expenseList.length,
+              itemBuilder: (context, index) {
+                Expense expense = expenseList[index];
+                return ListTile(
+                  title: Text(
+                    expense.title,
+                    style: TextStyle(color: Color(0xFFEEEEEE)),
+                  ),
+                  trailing: Text(
+                    'Ksh. ${expense.amount.toString()}',
+                    style: TextStyle(color:  Color(0xFF222831),
+                    fontSize: 14.0,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
 }

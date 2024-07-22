@@ -49,35 +49,60 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         leading: IconButton(
+        leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: Text('Notifications',
-        style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+        backgroundColor: Color(0xFF222831), // Matching color with BudgetPage
       ),
-      body: ListView.builder(
-        itemCount: _notifications.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(_notifications[index].title),
-            subtitle: Text(_notifications[index].description),
-            trailing: Text(DateFormat.yMMMd().add_jm().format(_notifications[index].time)),
-          );
-        },
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF222831),
+              Color(0xFF393E46),
+              Color(0xFFFD7014),
+              Color(0xFFEEEEEE),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: _notifications.length,
+          itemBuilder: (context, index) {
+            return Card(
+              color: Color(0xFF393E46), // Match card color
+              child: ListTile(
+                title: Text(_notifications[index].title,
+                  style: TextStyle(color: Colors.white),
+                ),
+                subtitle: Text(_notifications[index].description,
+                  style: TextStyle(color: Colors.white),
+                ),
+                trailing: Text(
+                  DateFormat.yMMMd().add_jm().format(_notifications[index].time),
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            );
+          },
+        ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+        backgroundColor: Color(0xFFFD7014),
         items: const [
-          Icon(Icons.home, color: Colors.black),
-          Icon(Icons.attach_money, color: Colors.black),
-          Icon(Icons.bar_chart, color: Colors.black),
-          Icon(Icons.notification_add, color: Colors.black),
-          Icon(Icons.settings, color: Colors.black),
+          Icon(Icons.dashboard, color: Color(0xFF222831)),
+          Icon(Icons.attach_money, color: Color(0xFF222831)),
+          Icon(Icons.bar_chart, color: Color(0xFF222831)),
+          Icon(Icons.notification_add, color: Color(0xFF222831)),
+          Icon(Icons.settings, color: Color(0xFF222831)),
         ],
         index: _pageIndex,
         onTap: (index) {
@@ -88,29 +113,24 @@ class _NotificationsPageState extends State<NotificationsPage> {
           // Handle button tap
           switch (index) {
             case 0:
-              // Navigate to Home Page
-               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => DashboardPage()));
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => DashboardPage()));
               break;
             case 1:
-              // Navigate to Add Income Page
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => BudgetPage()));
+                MaterialPageRoute(builder: (context) => BudgetPage()));
               break;
             case 2:
-              // Navigate to Charts Page
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ChartsPage()));
+                MaterialPageRoute(builder: (context) => ChartsPage()));
               break;
             case 3:
-              // Navigate to Notifications Page
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => NotificationsPage()));
+                MaterialPageRoute(builder: (context) => NotificationsPage()));
               break;
             case 4:
-              // Navigate to Settings Page
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()));
+                MaterialPageRoute(builder: (context) => ProfilePage()));
               break;
           }
         },

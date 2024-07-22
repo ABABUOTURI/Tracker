@@ -170,13 +170,13 @@ class _ExpenseListPageState extends State<ExpenseListPage> {
         ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Color(0xFFFD7014),
         items: const [
-          Icon(Icons.home, color: Colors.black),
-          Icon(Icons.attach_money, color: Colors.black),
-          Icon(Icons.bar_chart, color: Colors.black),
-          Icon(Icons.notification_add, color: Colors.black),
-          Icon(Icons.settings, color: Colors.black),
+          Icon(Icons.dashboard, color: Color(0xFF222831),),
+          Icon(Icons.attach_money, color: Color(0xFF222831),),
+          Icon(Icons.bar_chart, color:  Color(0xFF222831),),
+          Icon(Icons.notification_add, color:  Color(0xFF222831),),
+          Icon(Icons.settings, color:  Color(0xFF222831)),
         ],
         onTap: (index) {
           // Handle button tap

@@ -11,29 +11,18 @@ class AddExpensePage extends StatefulWidget {
 class _AddExpensePageState extends State<AddExpensePage> {
   TextEditingController amountController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  String? selectedCategory;
-
-  List<Category> categories = [
-    Category(name: 'Households', type: 'Expense'),
-    Category(name: 'Education', type: 'Expense'),
-    Category(name: 'Vacation', type: 'Expense'),
-    Category(name: 'Rent', type: 'Expense'),
-    Category(name: 'Groceries', type: 'Expense'),
-    Category(name: 'Transportation', type: 'Expense'),
-    Category(name: 'Medication', type: 'Expense'),
-  ];
+  TextEditingController categoryController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    if (categories.isNotEmpty) {
-      selectedCategory = categories[0].name;
-    }
   }
 
   void saveExpense() async {
+    String category = categoryController.text.trim();
+
     if (amountController.text.isEmpty ||
-        selectedCategory == null ||
+        category.isEmpty ||
         descriptionController.text.isEmpty) {
       // Show error if any field is empty
       showDialog(
@@ -80,7 +69,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
           .collection('expenses')
           .add({
         'amount': amount,
-        'category': selectedCategory,
+        'category': category,
         'description': descriptionController.text,
         'timestamp': FieldValue.serverTimestamp(), // Add server timestamp
         'userId': userId,
@@ -88,9 +77,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
       }).then((value) {
         amountController.clear();
         descriptionController.clear();
-        setState(() {
-          selectedCategory = categories.isNotEmpty ? categories[0].name : null;
-        });
+        categoryController.clear();
 
         showDialog(
           context: context,
@@ -151,80 +138,101 @@ class _AddExpensePageState extends State<AddExpensePage> {
           'Add Expense',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+        backgroundColor: Color(0xFF222831),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: amountController,
-              decoration: InputDecoration(labelText: 'Amount'),
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 12.0),
-            DropdownButtonFormField<String>(
-              value: selectedCategory,
-              onChanged: (newValue) {
-                setState(() {
-                  selectedCategory = newValue!;
-                });
-              },
-              items: categories.map((Category category) {
-                return DropdownMenuItem<String>(
-                  value: category.name,
-                  child: Text(category.name),
-                );
-              }).toList(),
-              decoration: InputDecoration(
-                labelText: 'Category',
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF222831),
+              Color(0xFF393E46),
+              Color(0xFFFD7014),
+              Color(0xFFEEEEEE),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                controller: amountController,
+                decoration: InputDecoration(
+                  labelText: 'Amount',
+                  border: OutlineInputBorder(), // Added border
+                ),
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: Color(0xFFEEEEEE)),
               ),
-            ),
-            SizedBox(height: 12.0),
-            TextField(
-              controller: descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
-            ),
-            SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: saveExpense,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 3, 40, 104),
+              SizedBox(height: 12.0),
+              TextField(
+                controller: categoryController,
+                decoration: InputDecoration(
+                  labelText: 'Category',
+                  border: OutlineInputBorder(), // Added border
+                ),
+                style: TextStyle(color: Color(0xFFEEEEEE)),
               ),
-              child: Text(
-                'Save',
-                style: TextStyle(color: Colors.white),
+              SizedBox(height: 12.0),
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(), // Added border
+                ),
+                style: TextStyle(color: Color(0xFFEEEEEE)),
               ),
-            ),
-            SizedBox(height: 8.0),
-            TextButton(
-              onPressed: () {
-                amountController.clear();
-                descriptionController.clear();
-                setState(() {
-                  selectedCategory = categories.isNotEmpty ? categories[0].name : null;
-                });
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 3, 40, 104),
+              SizedBox(height: 20.0),
+              // Arrange buttons in two columns
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: saveExpense,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF222831),
+                      ),
+                      child: Text(
+                        'Save',
+                        style: TextStyle(color: Color(0xFFEEEEEE)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10.0),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        amountController.clear();
+                        descriptionController.clear();
+                        categoryController.clear();
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Color(0xFF222831),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Color(0xFFEEEEEE)),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Color.fromARGB(255, 3, 40, 104),
+        backgroundColor: Color(0xFFFD7014),
         items: const [
-          Icon(Icons.home, color: Colors.black),
-          Icon(Icons.attach_money, color: Colors.black),
-          Icon(Icons.bar_chart, color: Colors.black),
-          Icon(Icons.notification_add, color: Colors.black),
-          Icon(Icons.settings, color: Colors.black),
+          Icon(Icons.dashboard, color: Color(0xFF222831)),
+          Icon(Icons.attach_money, color: Color(0xFF222831)),
+          Icon(Icons.bar_chart, color: Color(0xFF222831)),
+          Icon(Icons.notification_add, color: Color(0xFF222831)),
+          Icon(Icons.settings, color: Color(0xFF222831)),
         ],
       ),
     );
