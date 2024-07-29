@@ -1,24 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter1/pages/add_expense_page.dart';
-import 'package:flutter1/pages/add_income_page.dart';
-import 'package:flutter1/pages/income_list_page.dart';
-import 'package:flutter1/pages/login_page.dart';
-import 'package:flutter1/pages/reset_password_page.dart';
-
+import 'package:flutter/material.dart';
+import 'navigation_shell.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: "AIzaSyBfhHbo68kQBTYcywwVR8lK9KxsR2qZiMI",
-      authDomain: "contactportfolio-ea6bf.firebaseapp.com",
-      projectId: "contactportfolio-ea6bf",
-      storageBucket: "contactportfolio-ea6bf.appspot.com",
-      messagingSenderId: "440719674261",
-      appId: "1:440719674261:android:ba2de03a3c7056d61c449c",
-    ),
-  );
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -26,22 +12,34 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, 
-      title: 'Expense Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+      home: NavigationShell(),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My First Flutter App'),
+        backgroundColor: Colors.teal, // App bar color
       ),
-      initialRoute: '/',
-      routes: {
-        
-        '/': (context) => LoginPage(),
-        '/reset_password': (context) => ResetPasswordPage(),
-        '/add_expense': (context) => AddExpensePage(),
-         '/add_income': (context) => AddIncomePage(),
-          '/income_list_page': (context) => IncomeListPage(),
-        // Add more routes as needed
-      },
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/flutter_logo.png',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+            SizedBox(height: 20),
+            Text('Home Page Content'),
+          ],
+        ),
+      ),
     );
   }
 }
